@@ -1,9 +1,8 @@
 import gym
 import random
 import numpy as np
-from numpy import savetxt
 
-BUCKETS = (1, 1, 6, 12)
+
 MAX_STEPS = 200
 MAX_EXP_RATE = 1
 MIN_EXP_RATE = 0.01
@@ -43,7 +42,7 @@ class CartPoleAgent():
 
     def update_q_value(self, state, action, reward, new_state):
         """
-        Using the Bellman equation, update the Q-value based on state-action pair
+        Using Bellman equation, update Q-value based on state-action pair
         Q(s, a) <- Q(s, a) + alpha(curr_reward + gamma * max(Q(s', a')) - Q(s, a))
         
         where max(Q(s', a') is the best future reward, and gamma = 1
@@ -85,6 +84,8 @@ class CartPoleAgent():
                 # take action
                 new_state, reward, done, _ = env.step(action)
                 new_state = self.em.discretize(new_state)
+
+                # accummulate rewards
                 episode_rewards += reward
 
                 # update Q-table 
@@ -100,7 +101,6 @@ class CartPoleAgent():
             rewards.append(episode_rewards)
         
         rewards_per_thousand_ep = np.split(np.array(rewards), self.episodes/500)
-        print(rewards_per_thousand_ep)
         count = 500
 
         for r in rewards_per_thousand_ep:
