@@ -55,15 +55,20 @@ class CartPoleAgent():
     def best_future_reward(self, state):
         return np.max(self.q_table[state])
 
-    def choose_action(self, state):
+    def choose_action(self, state, epsilon=True):
         """
         Action is chosen using epsilon-greedy algorithm
         """
-        if random.random() > self.epsilon:
-            return np.argmax(self.q_table[state])
+        best_action = np.argmax(self.q_table[state])
+        random_action = self.em.env.action_space.sample()
+
+        if epsilon:
+            if random.random() > self.epsilon:
+                return best_action
+            else:
+                return random_action
         else:
-            random_action = self.em.env.action_space.sample()
-            return random_action
+            return best_action
 
     def train(self):
         """
@@ -77,8 +82,10 @@ class CartPoleAgent():
             self.epsilon = MIN_EXP_RATE + (MAX_EXP_RATE - MIN_EXP_RATE) * np.exp(-EXP_DECAY_RATE * ep)
             done = False
             episode_rewards = 0
+            step = 0
 
-            for step in range(MAX_STEPS):
+            while not done and step < MAX_STEPS:
+
                 action = self.choose_action(state)
 
                 # take action
@@ -94,9 +101,10 @@ class CartPoleAgent():
                 # transition to the new state
                 state = new_state
 
-                if done: 
-                    print(f"Episode {ep} finished after {step + 1} timesteps.")
-                    break
+                step += 1
+
+            if done: 
+                print(f"Episode {ep} finished after {step + 1} timesteps.")
             
             rewards.append(episode_rewards)
         
@@ -107,7 +115,39 @@ class CartPoleAgent():
             print(f"{count}: {int(sum(r/500))}")
             count += 500
 
+    def play(self):
+        """
+        Playing using the populated Q-table; we want to exploit the Q-values
+        So, exploration rate will be set to a minimum rate
+        """
+
+        env = self.em.env
+        env._max_episode_steps = 1000
+        state = self.em.discretize(env.reset())
+        done = False
+        rewards = 0
+
+        while not done:
+            env.render()
+            action = self.choose_action(state, epsilon=False)
+
+            # take action
+            new_state, reward, done, _ = env.step(action)
+            print(new_state)
+            new_state = self.em.discretize(new_state)
+            rewards += reward         
+
+            # transition to the new state
+            state = new_state
+
+        print(f"Agent finished with a reward of {rewards}")
+        env.close()
 
 if __name__ == "__main__":
     agent = CartPoleAgent()
     agent.train()
+
+    play = input("Do you want to observe a trained cartpole? (Y/N): ")
+
+    if play.lower() == 'y' or play.lower() == 'yes':
+        agent.play()
