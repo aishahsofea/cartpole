@@ -120,9 +120,9 @@ class CartPoleAgent():
         Playing using the populated Q-table; we want to exploit the Q-values.
         So we will not use epsilon-greedy algorithm and only select the max Q-value.
         """
-
         env = self.em.env
         env._max_episode_steps = 1000
+        env = gym.wrappers.Monitor(env, "recording", force=True)
         state = self.em.discretize(env.reset())
         done = False
         rewards = 0
