@@ -72,7 +72,7 @@ class CartPoleAgent():
 
     def train(self):
         """
-        Train for 10,000 episodes where at each episode the exploration is decayed.
+        Train for 5,000 episodes where at each episode the exploration is decayed.
         """
         rewards = []
 
@@ -117,8 +117,8 @@ class CartPoleAgent():
 
     def play(self):
         """
-        Playing using the populated Q-table; we want to exploit the Q-values
-        So, exploration rate will be set to a minimum rate
+        Playing using the populated Q-table; we want to exploit the Q-values.
+        So we will not use epsilon-greedy algorithm and only select the max Q-value.
         """
 
         env = self.em.env
@@ -133,7 +133,6 @@ class CartPoleAgent():
 
             # take action
             new_state, reward, done, _ = env.step(action)
-            print(new_state)
             new_state = self.em.discretize(new_state)
             rewards += reward         
 

@@ -4,6 +4,8 @@ I recently finished the [CS50 AI course](https://cs50.harvard.edu/ai/2020/) by H
 
 What caught my attention the most was the RL algorithm; Q-learning. Unlike most other algorithms, where we need to prepare the data before training, Q-learning(or just RL in general) collects the data while training, sort of. For the project assignment, we need to implement [Nim](https://en.wikipedia.org/wiki/Nim). Our agent is trained by playing against itself for 10,000 times prior to playing against a human. I would say the outcome was impressive, I mean, I lost 100% of the time. Anyhow, I wanted to reinforce(no pun intended) my understanding and implemented it for a different environment.
 
+Check out my [implementation](https://github.com/aishahsofea/cartpole)!
+
 <h3>CartPole Problem</h3>
 
 Luckily for us, [Open AI Gym](https://gym.openai.com/) provides a number of environments we can choose from. The most popular one is --_wait for it_-- the CartPole, so I decided to go with that. Refer to [this wiki](https://github.com/openai/gym/wiki/CartPole-v0) for the problem details.
@@ -80,6 +82,14 @@ For every 500 episodes, I average out the total rewards.
 5000: 196
 ```
 
-After 5000 episodes of training, the average rewards is starting to look good. This means that, on average (episode 4501-5000), the pole was upright up to 196 timesteps. In fact, for the last 300 episodes or so, the pole was upright for 200 timesteps. This proves that our agent indeed learns over time.
+After 5000 episodes of training, the average rewards is starting to look good. This means that, on average (episode 4501-5000), the pole was upright up to 196 timesteps. In fact, for the last 300 episodes or so, the pole was upright for 200 timesteps. This shows that our agent indeed learns over time.
 
-**P/S**: Please check out [deeplizard](https://deeplizard.com/learn/video/HGeI30uATws) for Q-learning implementation with Gym. They also have awesome tutorials on topics like Deep Learning, Neural Networks and how to put the knowledge together using tools like Keras and Pytorch.
+<h5>Observe trained agent</h5>
+
+In `play()` method, we initialize a new CartPole environment. By default, the maximum timesteps for each CartPole episode is 500. However, I want to observe the agent balancing the pole for at most 1000 steps. This can be easily achieved by setting `env._max_episode_steps = 1000`. After the environment is set, we will render it for as long as `done = True`. Note that we are now utilizing the populated Q-table and actions are selected based on greedy algorithm instead of epsilon-greedy.
+
+Outcome: Our agent does really well!
+
+> `Agent finished with a reward of 1000.0`
+
+**P/S**: Please check out [deeplizard](https://deeplizard.com/learn/video/HGeI30uATws) for Q-learning implementation with Gym. Parts of my code are inspired by their implementation. They also have awesome tutorials on topics like Deep Learning, Neural Networks and how to put the knowledge together using tools like Keras and Pytorch.
